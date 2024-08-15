@@ -1,0 +1,136 @@
+data('iris')
+View(iris)
+
+# To view the dimensions
+dim(iris)
+
+# To get the column names
+names(iris)
+
+# To get observation number, numerical or categorical - similar to info()
+str(iris)
+
+# To get the Min, Max, Mean, Median, Q1, and Q3 FOR NUMERICAL DATA. 
+# Does NOT GIVE THE MODE FOR NUMERICAL DATA
+# It gives mode for categorical data
+summary(iris)
+
+# To get top 5 records
+head(iris)
+# To view top 2 records
+head(iris, 2)
+
+# To get bottom  5 records
+tail(iris)
+
+# To get bottom  3 records
+tail(iris, 3)
+
+# In R, the indexing start from one, not zero
+# iris[1:3] prints the first 3 features, all the records
+iris[1:3]
+
+# The first part assigns which rows to print, and the second part assigns the columns
+iris[1:10, 1:2]
+
+# In R to view both column name and row labels we use attributes(data)
+attributes(iris)
+
+# To axis certain columns, In R we use $ -> iris$Sepal.Length
+iris$Sepal.Length
+
+# To print the first two entries in Sepal Length
+head(iris$Sepal.Length, 2)
+
+# Display the first 10 values of Sepal.Length
+# In R, when you use the notation 1:10 to index elements, it includes both the start and the end of the range.
+iris$Sepal.Length[1:10]
+head(iris$Sepal.Length, 10)
+iris[1:10, 1]
+
+
+install.packages('Hmisc')
+library(Hmisc)
+
+# Now we can use describe
+describe(iris)
+
+# If you want statistical summary for only particular columns
+# c(1,3) -> using combine we create a vector to get only first and third column
+describe(iris[ ,c(1,3)])
+
+# To find the range
+range(iris$Sepal.Length)
+
+
+# To get the quantiles
+quantile(iris$Sepal.Length)
+
+colSums(is.na(iris))
+
+## Visualization'
+hist(iris$Sepal.Length)
+
+# To find variance in the data
+var(iris$Sepal.Length)
+
+# For some visualization we need to first make a table and then do the visualization
+# To convert it into a table
+table(iris$Sepal.Length)
+
+View(table(iris$Sepal.Length))
+
+## Pie Chart
+pie(table(iris$Sepal.Length))
+
+## Bar Chart
+barplot(iris$Sepal.Length)
+
+# Boxplot for Sepal Length and petal length
+boxplot(iris$Sepal.Length)
+
+# petal length
+boxplot(iris$Petal.Length)
+
+## BIVARIATE ANALYSIS
+# col -> colour. For different colours
+# pch -> for different shapes
+
+
+# Method 1
+plot(iris$Sepal.Length, iris$Petal.Length, col = iris$Species)
+
+# Method 2
+with(iris,
+  plot(Sepal.Length, Petal.Length, col = Species)
+)
+
+# pch -> for different shapes
+with(iris,
+  plot(Sepal.Length, Petal.Length, col = Species, pch = as.integer(Species))
+)
+
+# With Legend 
+# aes -> aesthetic
+library(ggplot2)
+
+ggplot(iris,
+  aes(Sepal.Length, Petal.Length, colour = Species, colour = Species)
+) + geom_point()
+
+
+# To create Pairplot
+install.packages("GGally")
+library(GGally)
+
+# To create Paisplot
+ggpairs(iris, aes(color = Species))
+
+
+ggpairs(iris,
+        columns = 1:4,         
+        aes(color = Species),   # Color by the Species variable
+        upper = list(continuous = "points"),  
+        lower = list(continuous = "smooth")    
+)
+
