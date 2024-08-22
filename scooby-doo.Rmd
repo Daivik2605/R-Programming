@@ -1,0 +1,147 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+library(readr)
+
+# Set working directory
+setwd("C:\\Users\\daivi\\Desktop\\Lambton\\AML 1114 - Data science and machine learning\\Code and Datasets\\week9")
+
+# Get working directory
+getwd()
+
+scooby <- read.csv("Scooby-Doo.csv")
+
+head(scooby)
+
+dim(scooby)
+# We have 603 rows and 75 columns
+
+str(scooby)
+
+summary(scooby)
+
+View(scooby)
+# Lets observe the number of null values
+sum(is.na(scooby))
+# There are 8 null values in the entire dataset
+
+# Lets check the average run time
+scooby$run.time
+mean(scooby$run.time)
+# Average run time is 23.052 minutes
+
+# Lets check the average imdb rating
+mean(scooby$imdb)
+# Error: gves argument is not numeric or logical, so we need to convert imdb to numeric type
+scooby$imdb <- as.numeric(scooby$imdb)
+
+str(scooby$imdb)
+
+tail(scooby$imdb)
+# As there are null values, it cannot find the mean
+
+# we need to handle the na values
+sum(is.na(scooby$imdb))
+
+# Lets calculate the null values in imdb, which excluding the na values
+mean_imdb <- mean(scooby$imdb, na.rm=TRUE)
+mean_imdb
+
+# The index column does not give us any useful information
+# We only want the columns from Series.name till format
+?dplyr
+# Install the dplyr package if not already installed
+install.packages("dplyr")
+
+# Subsetting to retain only required columns
+# Load the dplyr library
+library(dplyr)
+?select
+
+selected_cols <- scooby %>% select(series.name, network, season, title, imdb, engagement, date.aired, run.time, format)
+
+# Instead of writing each column name
+selected_col <- scooby %>% select(series.name:format)
+head(selected_col)
+
+# View the selected columns
+head(selected_cols)
+
+dim(selected_cols)
+
+dim(selected_col)
+View(selected_col)
+# How many unique value exists in network
+unique(selected_col$network)
+
+# Like nunique()
+table(selected_col$network)
+
+# Visualize the trends in imdb rating over time
+library(ggplot2)
+?ggplot2
+
+# Trends in IMDB over time, while observing network
+ggplot(selected_col,
+  aes(x = date.aired, y = imdb, colour = network)) + geom_point() + geom_jitter()
+  
+# Trends in IMDB over time, while observing format
+ggplot(selected_col,
+  aes(x = date.aired, y = imdb, colour = format)) + geom_point() + geom_jitter()
+
+?ggplot 
+  
+# Visualize the histogram of imdb
+hist(selected_col$imdb,
+  main="IMDB Rating Histogram",
+  xlab = "IMDB rating",
+  col = "skyblue",
+  )
+
+structure(selected_col$date.aired)
+
+summary(selected_col)
+
+# Install the lubridate package if not already installed
+install.packages("lubridate")
+
+# Load the lubridate package
+library(lubridate)
+
+selected_col$date.aired <- as.Date(selected_col$date.aired)
+
+selected_col$month = month(selected_col$date.aired, label=TRUE, abbr = TRUE)
+
+
+selected_col$year = year(selected_col$date.aired)
+
+head(selected_col)
+
+# To view the imdb trend according to year
+ggplot(selected_col,
+  aes(x=year, y= imdb, colour = network))+ geom_point() + geom_jitter()
+  
+  
+# Extract the month and year from the 'date.aired' column
+selected_col$month_year <- format(selected_col$date.aired, "%Y-%m")
+
+head(selected_col)  
+
+ggplot(selected_col,
+  aes(x=month_year, y= imdb, colour = network))+ geom_point() + geom_jitter()
+
+#ggplot(selected_col,
+# aes(x=date.aired, y= imdb, color = network)) + geom_point() +
+#  scale_x_date(breaks = seq(as.Date('1969-09-)), date_labels = "%b %Y")  
+
+# how did the trends in channels broadcasting so, change over time?
+table(selected_cols$network)
+selected_cols$date.aired <- as.Date(selected_cols$date.aired) 
+ggplot(selected_cols, aes(date.aired, imdb, colour = network)) +
+  geom_point(aes()) + scale_x_date(date_breaks = "10 month", date_labels = "%m %Y") + 
+  theme(axis.text.x=element_text(angle=45, hjust = 1))
+  
+# Reducing the #points displayed in this plot (should be less than 603)  
+
